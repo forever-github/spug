@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
 import { Table, Divider, Modal, Tag, message } from 'antd';
@@ -80,16 +85,15 @@ class ComTable extends React.Component {
   }, {
     title: '更新于',
     dataIndex: 'latest_run_time',
-    render: value => value ? moment(value).fromNow() : null
   }, {
     title: '操作',
     render: info => (
       <span>
-        <LinkButton onClick={() => this.handleActive(info)}>{info['is_active'] ? '禁用' : '启用'}</LinkButton>
+        <LinkButton auth="monitor.monitor.edit" onClick={() => this.handleActive(info)}>{info['is_active'] ? '禁用' : '启用'}</LinkButton>
         <Divider type="vertical"/>
-        <LinkButton onClick={() => store.showForm(info)}>编辑</LinkButton>
+        <LinkButton auth="monitor.monitor.edit" onClick={() => store.showForm(info)}>编辑</LinkButton>
         <Divider type="vertical"/>
-        <LinkButton onClick={() => this.handleDelete(info)}>删除</LinkButton>
+        <LinkButton auth="monitor.monitor.del" onClick={() => this.handleDelete(info)}>删除</LinkButton>
       </span>
     ),
     width: 180

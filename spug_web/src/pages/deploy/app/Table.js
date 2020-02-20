@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { toJS } from 'mobx';
 import { observer } from 'mobx-react';
@@ -36,11 +41,11 @@ class ComTable extends React.Component {
     title: '操作',
     render: info => (
       <span>
-        <LinkButton onClick={() => store.showExtForm(info.id)}>新建发布</LinkButton>
+        <LinkButton auth="deploy.app.edit" onClick={() => store.showExtForm(info.id)}>新建发布</LinkButton>
         <Divider type="vertical"/>
-        <LinkButton onClick={() => store.showForm(info)}>编辑</LinkButton>
+        <LinkButton auth="deploy.app.edit" onClick={() => store.showForm(info)}>编辑</LinkButton>
         <Divider type="vertical"/>
-        <LinkButton onClick={() => this.handleDelete(info)}>删除</LinkButton>
+        <LinkButton auth="deploy.app.del" onClick={() => this.handleDelete(info)}>删除</LinkButton>
       </span>
     )
   }];
@@ -96,9 +101,11 @@ class ComTable extends React.Component {
       title: '操作',
       render: info => (
         <span>
-        <LinkButton onClick={() => store.showExtForm(record.id, info)}>编辑</LinkButton>
+        <LinkButton auth="deploy.app.edit" onClick={() => store.showExtForm(record.id, info)}>编辑</LinkButton>
         <Divider type="vertical"/>
-        <LinkButton onClick={() => this.handleDeployDelete(info)}>删除</LinkButton>
+        <LinkButton auth="deploy.app.edit" onClick={() => store.showExtForm(record.id, info, true)}>克隆配置</LinkButton>
+        <Divider type="vertical"/>
+        <LinkButton auth="deploy.app.edit" onClick={() => this.handleDeployDelete(info)}>删除</LinkButton>
       </span>
       )
     }];

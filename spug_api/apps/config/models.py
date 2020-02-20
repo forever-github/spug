@@ -1,3 +1,6 @@
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 from django.db import models
 from libs import ModelMixin, human_datetime
 from apps.account.models import User
@@ -20,7 +23,7 @@ class Environment(models.Model, ModelMixin):
 
 class Service(models.Model, ModelMixin):
     name = models.CharField(max_length=50)
-    key = models.CharField(max_length=50)
+    key = models.CharField(max_length=50, unique=True)
     desc = models.CharField(max_length=255, null=True)
     created_at = models.CharField(max_length=20, default=human_datetime)
     created_by = models.ForeignKey(User, on_delete=models.PROTECT)
@@ -44,7 +47,7 @@ class Config(models.Model, ModelMixin):
     env = models.ForeignKey(Environment, on_delete=models.PROTECT)
     value = models.TextField(null=True)
     desc = models.CharField(max_length=255, null=True)
-    is_public = models.BooleanField(default=True)
+    is_public = models.BooleanField(default=False)
     updated_at = models.CharField(max_length=20)
     updated_by = models.ForeignKey(User, on_delete=models.PROTECT)
 
@@ -53,7 +56,7 @@ class Config(models.Model, ModelMixin):
 
     class Meta:
         db_table = 'configs'
-        ordering = ('-id',)
+        ordering = ('-key',)
 
 
 class ConfigHistory(models.Model, ModelMixin):
@@ -79,4 +82,4 @@ class ConfigHistory(models.Model, ModelMixin):
 
     class Meta:
         db_table = 'config_histories'
-        ordering = ('-id',)
+        ordering = ('key',)

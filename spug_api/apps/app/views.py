@@ -1,3 +1,6 @@
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 from django.views.generic import View
 from django.db.models import F
 from libs import JsonParser, Argument, json_response
@@ -9,7 +12,10 @@ import json
 
 class AppView(View):
     def get(self, request):
-        apps = App.objects.all()
+        query = {}
+        if not request.user.is_supper:
+            query['id__in'] = request.user.deploy_perms['apps']
+        apps = App.objects.filter(**query)
         return json_response(apps)
 
     def post(self, request):
@@ -27,6 +33,21 @@ class AppView(View):
                 App.objects.filter(pk=form.id).update(**form)
             else:
                 App.objects.create(created_by=request.user, **form)
+        return json_response(error=error)
+
+    def patch(self, request):
+        form, error = JsonParser(
+            Argument('id', type=int, help='参数错误'),
+            Argument('rel_apps', type=list, required=False),
+            Argument('rel_services', type=list, required=False)
+        ).parse(request.body)
+        if error is None:
+            app = App.objects.filter(pk=form.id).first()
+            if not app:
+                return json_response(error='未找到指定应用')
+            app.rel_apps = json.dumps(form.rel_apps)
+            app.rel_services = json.dumps(form.rel_services)
+            app.save()
         return json_response(error=error)
 
     def delete(self, request):
@@ -47,6 +68,10 @@ class DeployView(View):
         form, error = JsonParser(
             Argument('app_id', type=int, required=False)
         ).parse(request.GET, True)
+        if not request.user.is_supper:
+            perms = request.user.deploy_perms
+            form.app_id__in = perms['apps']
+            form.env_id__in = perms['envs']
         deploys = Deploy.objects.filter(**form).annotate(app_name=F('app__name'))
         return json_response(deploys)
 
@@ -60,7 +85,8 @@ class DeployView(View):
             Argument('is_audit', type=bool, default=False)
         ).parse(request.body)
         if error is None:
-            if Deploy.objects.filter(app_id=form.app_id, env_id=form.env_id).exists():
+            deploy = Deploy.objects.filter(app_id=form.app_id, env_id=form.env_id).first()
+            if deploy and deploy.id != form.id:
                 return json_response(error='应用在该环境下已经存在发布配置')
             form.host_ids = json.dumps(form.host_ids)
             if form.extend == '1':

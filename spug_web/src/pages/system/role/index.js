@@ -1,15 +1,21 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
-import { Card, Input, Button } from 'antd';
-import { SearchForm } from 'components';
+import { Input, Button } from 'antd';
+import { SearchForm, AuthCard } from 'components';
 import ComTable from './Table';
 import ComForm from './Form';
-import Permission from './Permission';
+import PagePerm from './PagePerm';
+import DeployPerm from './DeployPerm';
 import store from './store';
 
 export default observer(function () {
   return (
-    <Card>
+    <AuthCard auth="system.role.view">
       <SearchForm>
         <SearchForm.Item span={8} title="角色名称">
           <Input allowClear onChange={e => store.f_name = e.target.value} placeholder="请输入"/>
@@ -23,7 +29,8 @@ export default observer(function () {
       </div>
       <ComTable/>
       {store.formVisible && <ComForm/>}
-      {store.permVisible && <Permission/>}
-    </Card>
+      {store.pagePermVisible && <PagePerm/>}
+      {store.deployPermVisible && <DeployPerm/>}
+    </AuthCard>
   )
 })

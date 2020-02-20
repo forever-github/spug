@@ -1,3 +1,6 @@
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 from paramiko.client import SSHClient, AutoAddPolicy
 from paramiko.config import SSH_PORT
 from paramiko.rsakey import RSAKey
@@ -53,6 +56,7 @@ class SSH:
             sftp.close()
 
     def exec_command(self, command, timeout=1800, environment=None):
+        command = 'set -e\n' + command
         with self as cli:
             chan = cli.get_transport().open_session()
             chan.settimeout(timeout)
@@ -65,6 +69,7 @@ class SSH:
             return chan.recv_exit_status(), out.read()
 
     def exec_command_with_stream(self, command, timeout=1800, environment=None):
+        command = 'set -e\n' + command
         with self as cli:
             chan = cli.get_transport().open_session()
             chan.settimeout(timeout)

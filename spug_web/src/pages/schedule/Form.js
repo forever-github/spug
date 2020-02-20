@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
 import { Modal, Form, Input, Select, Col, Button, Steps, Tabs, InputNumber, DatePicker, Icon, message } from 'antd';
@@ -205,9 +210,9 @@ class ComForm extends React.Component {
                         onChange={v => this.handleArgs('date', v)}/>
                     </Form.Item>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="UNIX Cron" key="cron">
+                  <Tabs.TabPane disabled tab="UNIX Cron" key="cron">
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="日历间隔" key="calendarinterval">
+                  <Tabs.TabPane disabled tab="日历间隔" key="calendarinterval">
                   </Tabs.TabPane>
                 </Tabs>
               )}

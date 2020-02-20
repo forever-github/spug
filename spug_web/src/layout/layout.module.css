@@ -12,6 +12,9 @@
 }
 
 .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 24px 24px 0;
     overflow-y: scroll;
 }
@@ -67,9 +70,40 @@
 .action:hover {
     background: rgb(233, 247, 254);
 }
-
-.footer {
-    margin: 48px 0 24px;
+.notify {
+    width: 350px;
+    padding: 0;
+}
+.notify :global(.ant-dropdown-menu-item:hover) {
+    background-color: #fff;
+}
+.notifyItem {
+    align-items: center;
+    cursor: pointer;
+    padding: 12px 24px;
+}
+.notifyItem:hover {
+    background-color: rgb(233, 247, 254);
+}
+.notifyFooter {
+    line-height: 46px;
     text-align: center;
-    color: rgba(0, 0, 0, .45);
+    cursor: pointer;
+    border-top: 1px solid #e8e8e8;
+}
+
+.footerZone {
+    width: 100%;
+    padding: 20px;
+    font-size: 14px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.footerZone .linksZone {
+    margin-bottom: 7px;
+}
+.footerZone .links{
+    margin-right: 40px;
 }

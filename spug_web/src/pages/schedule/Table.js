@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
 import { Table, Divider, Modal, Tag, Dropdown, Icon, Menu, message } from 'antd';
@@ -19,11 +24,11 @@ class ComTable extends React.Component {
   moreMenus = (info) => (
     <Menu>
       <Menu.Item>
-        <LinkButton onClick={() => this.handleActive(info)}>{info.is_active ? '禁用' : '激活'}</LinkButton>
+        <LinkButton auth="schedule.schedule.edit" onClick={() => this.handleActive(info)}>{info.is_active ? '禁用' : '激活'}</LinkButton>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item>
-        <LinkButton onClick={() => this.handleDelete(info)}>删除</LinkButton>
+        <LinkButton auth="schedule.schedule.del" onClick={() => this.handleDelete(info)}>删除</LinkButton>
       </Menu.Item>
     </Menu>
   );
@@ -53,9 +58,8 @@ class ComTable extends React.Component {
       }
     },
   }, {
-    title: '最近时间',
+    title: '更新于',
     dataIndex: 'latest_run_time',
-    render: value => value ? moment(value).fromNow() : 'N/A'
   }, {
     title: '描述信息',
     dataIndex: 'desc',
@@ -67,7 +71,7 @@ class ComTable extends React.Component {
       <span>
         <LinkButton disabled={!info['latest_run_time']} onClick={() => store.showInfo(info)}>详情</LinkButton>
         <Divider type="vertical"/>
-        <LinkButton onClick={() => store.showForm(info)}>编辑</LinkButton>
+        <LinkButton auth="schedule.schedule.edit" onClick={() => store.showForm(info)}>编辑</LinkButton>
         <Divider type="vertical"/>
         <Dropdown overlay={() => this.moreMenus(info)} trigger={['click']}>
           <LinkButton>

@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
 import { Modal, Form, Input, Select, Radio, message, Steps, Button, Transfer, Checkbox } from 'antd';
@@ -22,7 +27,7 @@ class ComForm extends React.Component {
       page: 0,
       modeOptions: [
         {label: '微信', 'value': '1'},
-        {label: '短信', 'value': '2'},
+        {label: '短信', 'value': '2', disabled: true},
         {label: '钉钉', 'value': '3'},
         {label: '邮件', 'value': '4'}]
     }

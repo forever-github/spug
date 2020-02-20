@@ -1,7 +1,11 @@
-import { makeRoute } from "../../libs/router";
-import Index from './index';
-
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
+import { lazy } from 'react';
+import { makeRoute } from 'libs/router';
 
 export default [
-  makeRoute('', Index),
+  makeRoute('', lazy(() => import('./index'))),
 ]

@@ -1,3 +1,6 @@
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 from django.views.generic import View
 from django.shortcuts import render
 from django.http.response import HttpResponseBadRequest
@@ -66,11 +69,11 @@ def valid_ssh(hostname, port, username, password):
         AppSetting.set('public_key', public_key, 'ssh public key')
     if password:
         cli = SSH(hostname, port, username, password=password)
-        code, stdout, stderr = cli.exec_command('mkdir -p -m 700 ~/.ssh && \
+        code, out = cli.exec_command('mkdir -p -m 700 ~/.ssh && \
                 echo %r >> ~/.ssh/authorized_keys && \
                 chmod 600 ~/.ssh/authorized_keys' % public_key)
         if code != 0:
-            raise Exception('add public key error: ' + ''.join(x for x in stderr))
+            raise Exception(f'add public key error: {out!r}')
     else:
         cli = SSH(hostname, port, username, private_key)
 

@@ -1,4 +1,7 @@
 """
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 WSGI config for spug project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
@@ -10,6 +13,7 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'spug.settings')
 

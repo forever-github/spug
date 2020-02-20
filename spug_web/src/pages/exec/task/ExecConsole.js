@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
 import { Modal, Collapse, Icon } from 'antd';
@@ -17,7 +22,8 @@ class ExecConsole extends React.Component {
   }
 
   componentDidMount() {
-    this.socket = new WebSocket(`ws://localhost:8000/ws/exec/${store.token}/`);
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    this.socket = new WebSocket(`${protocol}//${window.location.host}/api/ws/exec/${store.token}/`);
     this.socket.onopen = () => {
       this.socket.send('ok');
       for (let item of Object.values(store.outputs)) {

@@ -1,13 +1,18 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
-import { Card, Input, Select, Button } from 'antd';
-import { SearchForm } from 'components';
+import { Input, Select, Button } from 'antd';
+import { SearchForm, AuthDiv, AuthCard } from 'components';
 import ComTable from './Table';
 import store from './store';
 
 export default observer(function () {
   return (
-    <Card>
+    <AuthCard auth="exec.template.view">
       <SearchForm>
         <SearchForm.Item span={8} title="模板类型">
           <Select allowClear onChange={v => store.f_type = v} placeholder="请选择">
@@ -23,10 +28,10 @@ export default observer(function () {
           <Button type="primary" icon="sync" onClick={store.fetchRecords}>刷新</Button>
         </SearchForm.Item>
       </SearchForm>
-      <div style={{marginBottom: 16}}>
+      <AuthDiv auth="exec.template.add" style={{marginBottom: 16}}>
         <Button type="primary" icon="plus" onClick={() => store.showForm()}>新建</Button>
-      </div>
+      </AuthDiv>
       <ComTable/>
-    </Card>
+    </AuthCard>
   )
 })

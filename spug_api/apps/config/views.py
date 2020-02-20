@@ -1,3 +1,6 @@
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 from django.views.generic import View
 from django.db.models import F
 from libs import json_response, JsonParser, Argument
@@ -7,7 +10,10 @@ import json
 
 class EnvironmentView(View):
     def get(self, request):
-        envs = Environment.objects.all()
+        query = {}
+        if not request.user.is_supper:
+            query['id__in'] = request.user.deploy_perms['envs']
+        envs = Environment.objects.filter(**query)
         return json_response(envs)
 
     def post(self, request):
@@ -111,6 +117,7 @@ class ConfigView(View):
         form, error = JsonParser(
             Argument('id', type=int, help='缺少必要参数'),
             Argument('value', type=str, default=''),
+            Argument('is_public', type=bool, help='缺少必要参数'),
             Argument('desc', required=False)
         ).parse(request.body)
         if error is None:
@@ -118,20 +125,18 @@ class ConfigView(View):
             config = Config.objects.filter(pk=form.id).first()
             if not config:
                 return json_response(error='未找到指定对象')
+            config.desc = form.desc
+            config.is_public = form.is_public
             if config.value != form.value:
                 old_value = config.value
                 config.value = form.value
-                config.desc = form.desc
                 config.updated_at = human_datetime()
                 config.updated_by = request.user
-                config.save()
                 ConfigHistory.objects.create(
                     action='2',
                     old_value=old_value,
                     **config.to_dict(excludes=('id',)))
-            elif config.desc != form.desc:
-                config.desc = form.desc
-                config.save()
+            config.save()
         return json_response(error=error)
 
     def delete(self, request):
@@ -211,10 +216,12 @@ def parse_text(request):
     if error is None:
         data = {}
         for line in form.pop('data').split('\n'):
-            fields = line.split('=', 1)
-            if len(fields) != 2 or fields[0].strip() == '':
-                return json_response(error=f'解析配置{line!r}失败，确认其遵循 key = value 格式')
-            data[fields[0].strip()] = fields[1].strip()
+            line = line.strip()
+            if line:
+                fields = line.split('=', 1)
+                if len(fields) != 2 or fields[0].strip() == '':
+                    return json_response(error=f'解析配置{line!r}失败，确认其遵循 key = value 格式')
+                data[fields[0].strip()] = fields[1].strip()
         _parse(request, form, data)
     return json_response(error=error)
 
@@ -245,7 +252,7 @@ def _parse(request, query, data):
             item.delete()
     for key, value in data.items():
         query.key = key
-        query.is_public = True
+        query.is_public = False
         query.value = _filter_value(value)
         query.updated_at = human_datetime()
         query.updated_by = request.user

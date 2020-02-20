@@ -1,3 +1,6 @@
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 from django.views.generic import View
 from django.db.models import F
 from libs import json_response, JsonParser, Argument, human_datetime, human_time
@@ -13,8 +16,12 @@ import uuid
 
 class RequestView(View):
     def get(self, request):
-        data = []
-        for item in DeployRequest.objects.annotate(
+        data, query = [], {}
+        if not request.user.is_supper:
+            perms = request.user.deploy_perms
+            query['deploy__app_id__in'] = perms['apps']
+            query['deploy__env_id__in'] = perms['envs']
+        for item in DeployRequest.objects.filter(**query).annotate(
                 env_name=F('deploy__env__name'),
                 app_name=F('deploy__app__name'),
                 app_host_ids=F('deploy__host_ids'),
@@ -82,7 +89,7 @@ class RequestView(View):
                 type='2',
                 extra=pre_req.extra,
                 host_ids=req.host_ids,
-                status='0',
+                status='0' if pre_req.deploy.is_audit else '1',
                 desc='自动回滚至该应用的上个版本',
                 version=pre_req.version,
                 created_by=request.user
@@ -102,7 +109,7 @@ class RequestDetailView(View):
     def get(self, request, r_id):
         req = DeployRequest.objects.filter(pk=r_id).first()
         if not req:
-            return json_response(error='为找到指定发布申请')
+            return json_response(error='未找到指定发布申请')
         hosts = Host.objects.filter(id__in=json.loads(req.host_ids))
         targets = [{'id': x.id, 'title': f'{x.name}({x.hostname}:{x.port})'} for x in hosts]
         server_actions, host_actions = [], []
@@ -121,7 +128,12 @@ class RequestDetailView(View):
         })
 
     def post(self, request, r_id):
-        req = DeployRequest.objects.filter(pk=r_id).first()
+        query = {'pk': r_id}
+        if not request.user.is_supper:
+            perms = request.user.deploy_perms
+            query['deploy__app_id__in'] = perms['apps']
+            query['deploy__env_id__in'] = perms['envs']
+        req = DeployRequest.objects.filter(**query).first()
         if not req:
             return json_response(error='未找到指定发布申请')
         if req.status not in ('1', '-3'):

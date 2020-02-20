@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import { observable } from "mobx";
 import http from 'libs/http';
 
@@ -38,7 +43,7 @@ class Store {
     this.formVisible = true;
   };
 
-  showExtForm = (app_id, info) => {
+  showExtForm = (app_id, info, isClone) => {
     this.page = 0;
     this.app_id = app_id;
     if (info) {
@@ -47,6 +52,7 @@ class Store {
       } else {
         this.ext2Visible = true
       }
+      isClone && delete info.id;
       this.deploy = info
     } else {
       this.addVisible = true;

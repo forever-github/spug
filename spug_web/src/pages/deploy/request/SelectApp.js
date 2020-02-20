@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { observer } from 'mobx-react';
@@ -17,13 +22,11 @@ class SelectApp extends React.Component {
   }
 
   componentDidMount() {
+    store.loadDeploys();
     if (envStore.records.length === 0) {
       envStore.fetchRecords().then(this._initEnv)
     } else {
       this._initEnv()
-    }
-    if (store.deploys.length === 0) {
-      store.loadDeploys()
     }
   }
 

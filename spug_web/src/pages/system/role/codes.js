@@ -1,4 +1,19 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 export default [{
+  key: 'home',
+  label: '工作台',
+  pages: [{
+    key: 'home',
+    label: '工作台',
+    perms: [
+      {key: 'view', label: '查看工作台'}
+    ]
+  }]
+}, {
   key: 'host',
   label: '主机管理',
   pages: [{
@@ -51,6 +66,7 @@ export default [{
       {key: 'add', label: '新建申请'},
       {key: 'edit', label: '编辑申请'},
       {key: 'del', label: '删除申请'},
+      {key: 'approve', label: '审核申请'},
       {key: 'do', label: '执行发布'}
     ]
   }]
@@ -80,7 +96,7 @@ export default [{
       {key: 'del', label: '删除环境'}
     ]
   }, {
-    key: 'service',
+    key: 'src',
     label: '服务管理',
     perms: [
       {key: 'view', label: '查看服务'},
@@ -100,6 +116,47 @@ export default [{
       {key: 'del', label: '删除应用'},
       {key: 'view_config', label: '查看配置'},
       {key: 'edit_config', label: '修改配置'},
+    ]
+  }]
+}, {
+  key: 'monitor',
+  label: '监控中心',
+  pages: [{
+    key: 'monitor',
+    label: '监控中心',
+    perms: [
+      {key: 'view', label: '查看监控'},
+      {key: 'add', label: '新建监控'},
+      {key: 'edit', label: '编辑监控'},
+      {key: 'del', label: '删除监控'},
+    ]
+  }]
+}, {
+  key: 'alarm',
+  label: '报警中心',
+  pages: [{
+    key: 'alarm',
+    label: '报警记录',
+    perms: [
+      {key: 'view', label: '查看记录'}
+    ]
+  }, {
+    key: 'contact',
+    label: '报警联系人',
+    perms: [
+      {key: 'view', label: '查看联系人'},
+      {key: 'add', label: '新建联系人'},
+      {key: 'edit', label: '编辑联系人'},
+      {key: 'del', label: '删除联系人'},
+    ]
+  }, {
+    key: 'group',
+    label: '报警联系组',
+    perms: [
+      {key: 'view', label: '查看联系组'},
+      {key: 'add', label: '新建联系组'},
+      {key: 'edit', label: '编辑联系组'},
+      {key: 'del', label: '删除联系组'},
     ]
   }]
 }]

@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import { observable } from "mobx";
 import http from 'libs/http';
+import moment from "moment";
 
 class Store {
   @observable records = [];
@@ -18,6 +24,10 @@ class Store {
     this.isFetching = true;
     http.get('/api/schedule/')
       .then(({types, tasks}) => {
+        tasks.map(item => {
+          const value = item['latest_run_time'];
+          item['latest_run_time'] = value ? moment(value).fromNow() : null
+        });
         this.records = tasks;
         this.types = types
       })

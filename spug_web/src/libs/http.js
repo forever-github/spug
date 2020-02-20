@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import http from 'axios'
 import history from './history'
 import {message} from 'antd';
@@ -32,7 +37,7 @@ function handleResponse(response) {
 // 请求拦截器
 http.interceptors.request.use(request => {
   if (request.url.startsWith('/api/')) {
-    request.headers['X-TOKEN'] = localStorage.getItem('token')
+    request.headers['X-Token'] = localStorage.getItem('token')
   }
   request.timeout = 30000;
   return request;

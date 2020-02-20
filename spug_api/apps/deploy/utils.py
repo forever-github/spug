@@ -1,3 +1,6 @@
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 from django_redis import get_redis_connection
 from django.conf import settings
 from libs.utils import AttrDict, human_time
@@ -6,6 +9,7 @@ from concurrent import futures
 import socket
 import subprocess
 import json
+import uuid
 import os
 
 REPOS_DIR = settings.REPOS_DIR
@@ -14,34 +18,37 @@ REPOS_DIR = settings.REPOS_DIR
 def deploy_dispatch(request, req, token):
     rds = get_redis_connection()
     try:
+        api_token = uuid.uuid4().hex
+        rds.setex(api_token, 60 * 60, f'{req.deploy.app_id},{req.deploy.env_id}')
         helper = Helper(rds, token)
         helper.send_step('local', 1, f'完成\r\n{human_time()} 发布准备...        ')
-        rds.expire(token, 60 * 60)
         env = AttrDict(
             SPUG_APP_NAME=req.deploy.app.name,
             SPUG_APP_ID=str(req.deploy.app_id),
-            SPUG_TASK_NAME=req.name,
-            SPUG_TASK_ID=str(req.id),
+            SPUG_REQUEST_NAME=req.name,
+            SPUG_REQUEST_ID=str(req.id),
             SPUG_ENV_ID=str(req.deploy.env_id),
             SPUG_ENV_KEY=req.deploy.env.key,
             SPUG_VERSION=req.version,
-            SPUG_DEPLOY_TYPE=req.type
+            SPUG_DEPLOY_TYPE=req.type,
+            SPUG_API_TOKEN=api_token,
         )
         if req.deploy.extend == '1':
             env.update(json.loads(req.deploy.extend_obj.custom_envs))
-            _ext1_deploy(request, req, helper, env)
+            _ext1_deploy(req, helper, env)
         else:
-            _ext2_deploy(request, req, helper, env)
+            _ext2_deploy(req, helper, env)
         req.status = '3'
     except Exception as e:
         req.status = '-3'
         raise e
     finally:
+        rds.expire(token, 5 * 60)
         rds.close()
         req.save()
 
 
-def _ext1_deploy(request, req, helper, env):
+def _ext1_deploy(req, helper, env):
     extend = req.deploy.extend_obj
     extras = json.loads(req.extra)
     if extras[0] == 'branch':
@@ -86,7 +93,7 @@ def _ext1_deploy(request, req, helper, env):
                 raise t.exception()
 
 
-def _ext2_deploy(request, req, helper, env):
+def _ext2_deploy(req, helper, env):
     extend = req.deploy.extend_obj
     extras = json.loads(req.extra)
     host_actions = json.loads(extend.host_actions)
@@ -119,7 +126,7 @@ def _deploy_ext1_host(helper, h_id, extend, env):
     if code == 0:
         helper.send_error(host.id, f'please make sure the {extend.dst_dir!r} is not exists.')
     # clean
-    clean_command = f'ls -rd {env.SPUG_APP_ID}_* | tail -n +{extend.versions + 1} | xargs rm -rf'
+    clean_command = f'ls -rd {extend.deploy_id}_* 2> /dev/null | tail -n +{extend.versions + 1} | xargs rm -rf'
     helper.remote(host.id, ssh, f'cd {extend.dst_repo} && rm -rf {env.SPUG_VERSION} && {clean_command}')
     # transfer files
     tar_gz_file = f'{env.SPUG_VERSION}.tar.gz'
@@ -194,7 +201,7 @@ class Helper:
         self.rds.rpush(self.token, json.dumps({'key': key, 'step': step, 'data': data}))
 
     def local(self, command, env=None):
-        # print(f'helper.local: {command!r}')
+        command = 'set -e\n' + command
         task = subprocess.Popen(command, env=env, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         while True:
             message = task.stdout.readline()
@@ -205,7 +212,6 @@ class Helper:
             self.send_error('local', f'exit code: {task.returncode}')
 
     def remote(self, key, ssh, command, env=None):
-        # print(f'helper.remote: {command!r} env: {env!r}')
         code = -1
         try:
             for code, out in ssh.exec_command_with_stream(command, environment=env):

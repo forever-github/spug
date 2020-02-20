@@ -1,11 +1,15 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
-import { Link } from 'react-router-dom';
 import { Table, Divider, Modal, message } from 'antd';
 import ComForm from './Form';
 import http from 'libs/http';
 import store from './store';
-import { LinkButton } from "components";
+import { LinkButton, AuthLink } from "components";
 
 @observer
 class ComTable extends React.Component {
@@ -32,11 +36,11 @@ class ComTable extends React.Component {
     title: '操作',
     render: info => (
       <span>
-        <LinkButton onClick={() => store.showForm(info)}>编辑</LinkButton>
+        <LinkButton auth="config.src.edit" onClick={() => store.showForm(info)}>编辑</LinkButton>
         <Divider type="vertical"/>
-        <LinkButton onClick={() => this.handleDelete(info)}>删除</LinkButton>
+        <LinkButton auth="config.src.del" onClick={() => this.handleDelete(info)}>删除</LinkButton>
         <Divider type="vertical"/>
-        <Link to={`/config/setting/src/${info.id}`}>配置</Link>
+        <AuthLink auth="config.src.view_config" to={`/config/setting/src/${info.id}`}>配置</AuthLink>
       </span>
     )
   }];

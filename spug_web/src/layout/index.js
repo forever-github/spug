@@ -1,18 +1,31 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { Layout } from 'antd';
 import Sider from './Sider';
 import Header from './Header';
 import Footer from './Footer'
 import { Router } from '../libs/router';
+import { updatePermissions} from '../libs';
 import styles from './layout.module.css';
 
 
 export default class extends React.Component {
   constructor(props) {
     super(props);
+    this.initPermissions();
     this.state = {
       collapsed: false
     }
+  }
+
+  initPermissions() {
+    const data = localStorage.getItem('permissions');
+    const isSuper = localStorage.getItem('is_supper') === 'true';
+    data && updatePermissions(isSuper, JSON.parse(data))
   }
 
   render() {

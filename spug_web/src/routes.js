@@ -1,5 +1,11 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import { makeModuleRoute } from "./libs/router";
 
+import welcomeRoues from './pages/welcome/routes';
 import homeRoutes from './pages/home/routes';
 import hostRoutes from './pages/host/routes';
 import systemRoutes from './pages/system/routes';
@@ -12,6 +18,7 @@ import deployRoutes from './pages/deploy/routes';
 
 
 export default [
+  makeModuleRoute('/welcome', welcomeRoues),
   makeModuleRoute('/home', homeRoutes),
   makeModuleRoute('/host', hostRoutes),
   makeModuleRoute('/system', systemRoutes),

@@ -1,10 +1,15 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
 import { Menu, Input, Button, Select, PageHeader, Icon } from 'antd';
 import envStore from '../environment/store';
 import styles from './index.module.css';
 import history from 'libs/history';
-import { SearchForm } from 'components';
+import { SearchForm, AuthDiv, AuthButton } from 'components';
 import DiffConfig from './DiffConfig';
 import TableView from './TableView';
 import TextView from './TextView';
@@ -49,7 +54,7 @@ class Index extends React.Component {
   render() {
     const {view} = this.state;
     return (
-      <div className={styles.container}>
+      <AuthDiv auth={`config.${store.type}.view_config`} className={styles.container}>
         <div className={styles.left}>
           <PageHeader
             title="环境列表"
@@ -68,7 +73,7 @@ class Index extends React.Component {
         </div>
         <div className={styles.right}>
           <SearchForm>
-            <SearchForm.Item span={5} title="视图">
+            <SearchForm.Item span={6} title="视图">
               <Select value={view} style={{width: '100%'}} onChange={v => this.setState({view: v})}>
                 <Select.Option value="1"><Icon type="table" style={{marginRight: 10}}/>表格</Select.Option>
                 <Select.Option value="2"><Icon type="unordered-list" style={{marginRight: 10}}/>文本</Select.Option>
@@ -78,7 +83,7 @@ class Index extends React.Component {
             <SearchForm.Item span={7} title="Key">
               <Input allowClear onChange={e => store.f_name = e.target.value} placeholder="请输入"/>
             </SearchForm.Item>
-            <SearchForm.Item span={4}>
+            <SearchForm.Item span={3}>
               <Button type="primary" icon="sync" onClick={this.handleRefresh}>刷新</Button>
             </SearchForm.Item>
             <SearchForm.Item span={4}>
@@ -86,7 +91,7 @@ class Index extends React.Component {
                       onClick={store.showRecord}>更改历史</Button>
             </SearchForm.Item>
             <SearchForm.Item span={4} style={{textAlign: 'right'}}>
-              <Button disabled={view !== '1'} type="primary" icon="plus" onClick={() => store.showForm()}>新增配置</Button>
+              <AuthButton auth="config.app.edit_config|config.service.edit_config" disabled={view !== '1'} type="primary" icon="plus" onClick={() => store.showForm()}>新增配置</AuthButton>
             </SearchForm.Item>
           </SearchForm>
 
@@ -96,7 +101,7 @@ class Index extends React.Component {
         </div>
         {store.recordVisible && <Record/>}
         {store.diffVisible && <DiffConfig/>}
-      </div>
+      </AuthDiv>
     )
   }
 }

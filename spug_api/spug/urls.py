@@ -1,4 +1,7 @@
 """spug URL Configuration
+# Copyright: (c) OpenSpug Organization. https://github.com/openspug/spug
+# Copyright: (c) <spug.dev@gmail.com>
+# Released under the MIT License.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -26,4 +29,7 @@ urlpatterns = [
     path('config/', include('apps.config.urls')),
     path('app/', include('apps.app.urls')),
     path('deploy/', include('apps.deploy.urls')),
+    path('home/', include('apps.home.urls')),
+    path('notify/', include('apps.notify.urls')),
+    path('apis/', include('apps.apis.urls')),
 ]

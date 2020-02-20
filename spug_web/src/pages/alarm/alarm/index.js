@@ -1,13 +1,18 @@
+/**
+ * Copyright (c) OpenSpug Organization. https://github.com/openspug/spug
+ * Copyright (c) <spug.dev@gmail.com>
+ * Released under the MIT License.
+ */
 import React from 'react';
 import { observer } from 'mobx-react';
-import { Card, Input, Button } from 'antd';
-import { SearchForm } from 'components';
+import { Input, Button } from 'antd';
+import { SearchForm, AuthCard } from 'components';
 import ComTable from './Table';
 import store from './store';
 
 export default observer(function () {
   return (
-    <Card>
+    <AuthCard auth="alarm.alarm.view">
       <SearchForm>
         <SearchForm.Item span={8} title="任务名称">
           <Input allowClear onChange={e => store.f_name = e.target.value} placeholder="请输入"/>
@@ -17,6 +22,6 @@ export default observer(function () {
         </SearchForm.Item>
       </SearchForm>
       <ComTable/>
-    </Card>
+    </AuthCard>
   )
 })
